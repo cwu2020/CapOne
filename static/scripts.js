@@ -198,12 +198,8 @@ function addHouse(listing)
 }
 
 
-function addProperty()
+function addProperty(lat, long, data)
 {
-
-    var lat = document.getElementById("la").value;
-    var long = document.getElementById("lng").value;
-
     var myLatlng = new google.maps.LatLng(lat, long);
 
 
@@ -222,48 +218,46 @@ function addProperty()
     // To add the marker to the map, call setMap();
     markers.push(marker);
 
-
     var sum = 0;
     var weeklyrevenue;
     var maxweeklyrevenue = 0;
-    var maxindex;
+    var maxindex = 0;
     var avgweeklyrevenue;
 
-    $.getJSON("/search", function(data, textStatus, jqXHR) {
-        console.log(data);
-        for (i = 0; i<data.length; i++)
+    console.log(data);
+    for (let i = 0; i<data.length; i++)
+    {
+        weeklyrevenue = Number(data[i].price.replace(/[^0-9\.]+/g,"")) * data[i].reviews_per_month / 4.2857;
+
+        if (weeklyrevenue > maxweeklyrevenue)
         {
-            weeklyrevenue = data[i].price * data[i].reviews_per_month/4;
-            if (weeklyrevenue > maxweeklyrevenue)
-            {
-                maxweeklyrevenue = weeklyrevenue;
-                maxindex =i;
-            }
-            sum += weeklyrevenue;
+            maxweeklyrevenue = weeklyrevenue;
+            maxindex =i;
         }
-        avgweeklyrevenue = sum / data.length;
+        sum += weeklyrevenue;
+    }
+    avgweeklyrevenue = sum / data.length;
 
-        let div = "<div id='info'><p>The average weekly revenue is " + avgweeklyrevenue + ". You can maximize revenue at a price per night of " + data[maxindex].price + ".</p></div>";
+    let div = "<div id='info'><p>The average weekly revenue is $" + avgweeklyrevenue + ". You can maximize revenue at a price per night of " + data[maxindex].price + ".</p></div>";
 
-        // Set info window's content
-        info.setContent(div);
+    // Set info window's content
+    info.setContent(div);
 
-        // Open info window (if not already open)
-        info.open(map, marker);
-
-    });
+    // Open info window (if not already open)
+    info.open(map, marker);
 
 }
 
 $(function() {
     $('form').submit(function() {
-        addProperty();
-
         $.ajax({
             type: 'POST',
             url: '/search',
-            data: { lat: $(this).lat.value,
-                    lng: $(this).long.value }
+            data: { lat: $( "#la" ).val(),
+                    lng: $( "#lng" ).val() },
+            success: function(response) {
+                addProperty($( "#la" ).val(), $( "#lng" ).val(), response);
+            }
         });
 
         return false;
@@ -344,14 +338,14 @@ function configure()
 
 
 // Remove markers from map
-function removeMarkers()
-{
-    for(var i = 0; i < markers.length; i++)
-    {
-        markers[i].setMap(null);
-    }
-    markers = [];
-}
+// function removeMarkers()
+// {
+//     for(var i = 0; i < markers.length; i++)
+//     {
+//         markers[i].setMap(null);
+//     }
+//     markers = [];
+// }
 
 
 
@@ -399,7 +393,7 @@ function update()
     $.getJSON("/update", parameters, function(data, textStatus, jqXHR) {
 
        // Remove old markers from map
-       removeMarkers();
+    //   removeMarkers();
 
        // Add new markers to map
        for (let i = 0; i < data.length; i++)

@@ -30,24 +30,22 @@ def index():
 
 
 
-@app.route("/search", methods=['GET', 'POST'])
+@app.route("/search", methods=['POST'])
 def search():
     """Search for places that match query"""
 
     if request.method == "POST":
-
         # Ensure latitude was submitted
         if not request.form.get("lat"):
             return apology("please provide latitude and longitude", 403)
 
         # Ensure longitude was submitted
-        elif not request.form.get("long"):
+        elif not request.form.get("lng"):
             return apology("please provide longitude and longitude", 403)
 
         # rounds the entered coordinates to two decimal places, thus finding all the existing airbnb listings within a short distance (in the same neighborhood)
         lat= "{0:.2f}".format(float(request.form.get("lat"))) + "%"
-        longi="{0:.2f}".format(float(request.form.get("long"))) + "%"
-
+        longi="{0:.2f}".format(float(request.form.get("lng"))) + "%"
 
         rows = db2.execute("SELECT price, reviews_per_month, latitude, longitude, neighbourhood_cleansed FROM listings WHERE latitude LIKE :lat AND longitude LIKE :longi", lat=lat, longi=longi)
 
