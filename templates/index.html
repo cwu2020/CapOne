@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+        <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta -->
+        <meta charset="utf-8"/>
+        <meta content="initial-scale=1, width=device-width" name="viewport"/>
+
+        <!-- http://getbootstrap.com/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+
+        <!-- App's own CSS -->
+        <link href="/static/styles.css" rel="stylesheet"/>
+
+        <!-- https://developers.google.com/maps/documentation/javascript/ -->
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ key | urlencode }}&v=3.exp"></script>
+
+        <!-- http://jquery.com/ -->
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+        <!-- http://getbootstrap.com/ -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <!-- https://github.com/corejavascript/typeahead.js/blob/master/doc/jquery_typeahead.md -->
+        <script src="https://cdn.rawgit.com/corejavascript/typeahead.js/master/dist/typeahead.jquery.js"></script>
+
+        <!-- http://handlebarsjs.com/ -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
+        <!-- app's own JavaScript -->
+        <script src="/static/scripts.js"></script>
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <title>Airbnb Helper</title>
+
+    </head>
+    <body>
+
+        <!-- Fill viewport -->
+        <div class="container-fluid">
+
+            <!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
+            <div id="map-canvas"></div>
+
+            <!-- http://getbootstrap.com/css/#forms -->
+            <form id="form" action="/search" method="post" target="dummyframe">
+                <h4>Please enter the positive coordinates of your property.</h4>
+                <div class="form-group1">
+                    <input autocomplete="off" autofocus class="form-control" id="la" name="lat" placeholder="Latitude (N)" type="numeric"/>
+                </div>
+                <div class="form-group2">
+                    <input autocomplete="off" autofocus class="form-control" id="lng" name="long" placeholder="Longitude (W)" type="numeric"/>
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+
+            <div id="floating-panel2">
+                <h1>Airbnb Helper</h1>
+                <h4>by Carra Wu</h4>
+            </div>
+
+            <div id="floating-panel" style="overflow-y: scroll">
+                <h4>San Fransisco Listings by the Numbers</h4>
+                <p>These two graphs focus on the Castro neighborhood, where young tenants may be more price conscious and responsive to crowd-sourced feedback. In the first graph, we see slightly more bookings at lower price points, and in the second graph, we see more upward spread in bookings as the ratings move toward 100. Be sure to scroll down in this pane for a <b>BONUS!</b></p>
+                <div id="curve_chart" style="width: 900px; height: 330px"></div>
+                <div id="curve_chart2" style="width: 900px; height: 330px"></div>
+                <p>The neighborhood with the best reviews is Presidio, with an average score of 97.6666667. For confirmation, check out the JSON data here: </p>
+                <a href="http://personal-carrawu1.cs50.io:8080/bestneighborhood">http://personal-carrawu1.cs50.io:8080/bestneighborhood</a>
+            </div>
+
+            <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe"></iframe>
+        </div>
+
+    </body>
+</html>
