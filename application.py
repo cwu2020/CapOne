@@ -1,5 +1,10 @@
 import os
 import re
+import jinja2
+import datetime
+from google.appengine.ext import ndb
+from google.appengine.api import users
+
 from flask import Flask, jsonify, render_template, request
 
 from cs50 import SQL
@@ -11,6 +16,19 @@ app = Flask(__name__)
 # Configure CS50 Library to use SQLite database
 db2 = SQL("sqlite:///capone.db")
 
+#from google.appengine.api import users - for Gmail login
+env=jinja2.Environment(loader=jinja2.FileSystemLoader(''))
+
+# This function creates a login for the user.  It will be displayed on every page
+def gmail_login(self):
+    user = users.get_current_user()
+    if user:
+                greeting = ('<a id = "greeting" >Welcome, %s!</a>' % user.nickname()+ ' ' + '<a href="%s">(sign out)</a>' %
+                      users.create_logout_url('/'))
+    else:
+                greeting = ('<a href="%s">Sign in with a Google account</a>' %
+                    users.create_login_url('/'))
+    self.response.write('<html><body>%s</body></html>' % greeting)
 
 # Ensure responses aren't cached
 @app.after_request
