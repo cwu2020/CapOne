@@ -20,6 +20,7 @@ db2 = SQL("sqlite:///capone.db")
 env=jinja2.Environment(loader=jinja2.FileSystemLoader(''))
 
 # This function creates a login for the user.  It will be displayed on every page
+@app.route("/")
 def gmail_login(self):
     user = users.get_current_user()
     if user:
