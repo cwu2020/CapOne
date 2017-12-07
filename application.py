@@ -8,7 +8,7 @@ from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from datetime import datetime
-from helpers import apology, login_required
+from helpers import apology
 
 # Configure application
 app = Flask(__name__)
@@ -30,7 +30,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-
+# Home page of website
 @app.route("/", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -66,6 +66,7 @@ def login():
     else:
         return render_template("login.html")
 
+# site maps page
 @app.route("/index")
 def index():
     """Render map"""
@@ -73,8 +74,10 @@ def index():
     "SELECT username FROM users WHERE id=:id", id=session["user_id"])
     for tablevalue in tablevalues:
             name = tablevalue["username"]
+    # allow us to welcome user by their username
     return render_template("index.html", username=name)
 
+# registration page
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -139,8 +142,6 @@ def search():
         return jsonify(rows)
 
 
-
-    # return jsonify(db.execute("SELECT * FROM listings WHERE latitude LIKE :q AND LONGITUDE LIKE :q2", q=q, q2=))
 @app.route("/bestneighborhood")
 def bestneighborhood():
     rows = db2.execute("SELECT AVG(review_scores_rating), neighbourhood_cleansed FROM listings WHERE review_scores_rating NOT null AND review_scores_rating != '' GROUP BY neighbourhood_cleansed")

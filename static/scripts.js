@@ -1,4 +1,3 @@
-
 // Google Map
 let map;
 
@@ -222,23 +221,29 @@ function addProperty(lat, long, data)
     var weeklyrevenue;
     var maxweeklyrevenue = 0;
     var maxindex = 0;
+    var secondmaxindex = 0;
     var avgweeklyrevenue;
+    var optimal;
 
     console.log(data);
     for (let i = 0; i<data.length; i++)
     {
         weeklyrevenue = Number(data[i].price.replace(/[^0-9\.]+/g,"")) * data[i].reviews_per_month / 4.2857;
+        sum += weeklyrevenue;
 
         if (weeklyrevenue > maxweeklyrevenue)
         {
+            secondmaxindex = maxindex;
             maxweeklyrevenue = weeklyrevenue;
             maxindex =i;
         }
-        sum += weeklyrevenue;
     }
     avgweeklyrevenue = sum / data.length;
+    optimal = (Number(data[maxindex].price.replace(/[^0-9\.]+/g,"")) + Number(data[secondmaxindex].price.replace(/[^0-9\.]+/g,""))) /2;
+    console.log(data[maxindex].price);
+    console.log(data[secondmaxindex].price);
 
-    let div = "<div id='info'><p>The average weekly revenue is $" + avgweeklyrevenue + ". You can maximize revenue at a price per night of " + data[maxindex].price + ".</p></div>";
+    let div = "<div id='info'><p>The average weekly revenue is $" + avgweeklyrevenue + ". You can maximize revenue at a price per night of " + optimal + ".</p></div>";
 
     // Set info window's content
     info.setContent(div);
@@ -402,4 +407,4 @@ function update()
        }
 
     });
-};
+}
