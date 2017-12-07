@@ -29,34 +29,39 @@ html, body, #map-canvas, .container-fluid
     bottom: 25px;
     background-color: rgba(255,255,255,0.5);
 }
-
-#floating-panel2 {
-    position: absolute;
-    bottom: 28px;
-    left: 25px;
-    z-index: 5;
-    padding: 5px;
-    text-align: left;
-    line-height: 30px;
-    padding-left: 10px;
-    width: 500px;
-    bottom: 25px;
+.logo{
+  width: 300px;
+  padding-top: 150px;
+  padding-bottom: 0px;
 }
-
+.g-signin2{
+    padding-bottom: 15px;
+}
 h1 {
     color: gray;
 }
 
-h4 {
-    color: gray;
+h4, a{
+    color: white;
+    font-family: helvetica;
 }
-
+th {
+    padding-top: 50px;
+    font-size: 25px;
+    font-family: helvetica;
+    color: darkblue;
+}
+td {
+     padding-top: 15px;
+     padding-left: 255px;
+     font-family: helvetica;
+     color: darkblue;
+}
 /* Center form */
 #form
 {
     /* Position form "absolutely" where we want it */
     position: absolute;
-
     /* Distance from top edge of viewport */
     top: 28px;
     left: 25px;
@@ -84,7 +89,7 @@ h4 {
     position: absolute;
 
 
-    top: 80px;
+    top: 100px;
 
     /* Center container's content */
     justify-content: center;
@@ -93,8 +98,9 @@ h4 {
 #form .btn
 {
     position: absolute;
-    top: 125px;
+    top: 145px;
 }
+
 
 /* Stylize text box */
 #q

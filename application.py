@@ -1,35 +1,20 @@
 import os
 import re
 import jinja2
-import datetime
-from google.appengine.ext import ndb
-from google.appengine.api import users
-
-from flask import Flask, jsonify, render_template, request
-
 from cs50 import SQL
-from helpers import apology
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
+from tempfile import mkdtemp
+from werkzeug.exceptions import default_exceptions
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_session import Session
+from datetime import datetime
+from helpers import apology, login_required
 
 # Configure application
 app = Flask(__name__)
 
 # Configure CS50 Library to use SQLite database
 db2 = SQL("sqlite:///capone.db")
-
-#from google.appengine.api import users - for Gmail login
-env=jinja2.Environment(loader=jinja2.FileSystemLoader(''))
-
-# This function creates a login for the user.  It will be displayed on every page
-@app.route("/")
-def gmail_login(self):
-    user = users.get_current_user()
-    if user:
-                greeting = ('<a id = "greeting" >Welcome, %s!</a>' % user.nickname()+ ' ' + '<a href="%s">(sign out)</a>' %
-                      users.create_logout_url('/'))
-    else:
-                greeting = ('<a href="%s">Sign in with a Google account</a>' %
-                    users.create_login_url('/'))
-    self.response.write('<html><body>%s</body></html>' % greeting)
 
 # Ensure responses aren't cached
 @app.after_request
@@ -39,14 +24,92 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
-@app.route("/")
+
+@app.route("/", methods=["GET", "POST"])
+def login():
+    """Log user in"""
+
+    # Forget any user_id
+    session.clear()
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 403)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
+
+        # Query database for username
+        rows = db2.execute("SELECT * FROM users WHERE username =:username",
+                          username=request.form.get("username"))
+
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            return apology("invalid username and/or password", 403)
+
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+        # Redirect user to index page
+        return redirect("/index")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+
+@app.route("/index")
 def index():
     """Render map"""
-    if not os.environ.get("API_KEY"):
-        raise RuntimeError("API_KEY not set")
-    return render_template("index.html", key=os.environ.get("API_KEY"))
+    tablevalues = db2.execute(
+    "SELECT username FROM users WHERE id=:id", id=session["user_id"])
+    for tablevalue in tablevalues:
+            name = tablevalue["username"]
+    return render_template("index.html", username=name)
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register user"""
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("missing username", 400)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("missing password", 400)
+
+        elif not request.form.get("password") == request.form.get("confirmation"):
+            return apology("passwords don't match", 400)
+
+        # Query database for username
+        hashpassword = generate_password_hash(request.form.get("password"))
+        result = db2.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)",
+                            username=request.form.get("username"), hash=hashpassword)
+
+        if not result:
+            return apology("username already taken", 400)
+
+        # Remember which user has logged in
+        session["user_id"] = result
+
+        # Redirect user to home page
+        return redirect("/index")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
 
 
 @app.route("/search", methods=['POST'])
@@ -67,7 +130,11 @@ def search():
         longi="{0:.2f}".format(float(request.form.get("lng"))) + "%"
 
         rows = db2.execute("SELECT price, reviews_per_month, latitude, longitude, neighbourhood_cleansed FROM listings WHERE latitude LIKE :lat AND longitude LIKE :longi", lat=lat, longi=longi)
-
+         # store in history
+        lati = request.form.get("lat")
+        longit = request.form.get("lng")
+        db2.execute("INSERT INTO userhistory (lat, longi, id) VALUES(:lat, :longi, :id)",
+               lat=lati, longi=longit, id=session["user_id"])
         # Redirect user to home page
         return jsonify(rows)
 
@@ -130,3 +197,9 @@ def update():
 
     # Output places as JSON
     return jsonify(rows)
+
+@app.route("/history")
+def history():
+    """Show history of coordinate entries"""
+    allhistory = db2.execute("SELECT * from userhistory WHERE id=:id", id=session["user_id"])
+    return render_template("history.html", userhistory=allhistory)

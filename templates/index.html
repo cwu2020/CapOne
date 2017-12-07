@@ -14,8 +14,8 @@
         <link href="/static/styles.css" rel="stylesheet"/>
 
         <!-- https://developers.google.com/maps/documentation/javascript/ -->
-        <script src="https://maps.googleapis.com/maps/api/js?key={{ key | urlencode }}&v=3.exp"></script>
-
+        <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpg-pGBkgBvq0N9yJB2EwyivEd7JwNI9g&v=3.exp"></script>-->
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpg-pGBkgBvq0N9yJB2EwyivEd7JwNI9g&callback=initMap"></script>
         <!-- http://jquery.com/ -->
         <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
@@ -33,33 +33,34 @@
 
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        <title>Airbnb Helper</title>
+        <title>Cap One</title>
 
     </head>
     <body>
-
         <!-- Fill viewport -->
         <div class="container-fluid">
 
             <!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
             <div id="map-canvas"></div>
-
             <!-- http://getbootstrap.com/css/#forms -->
             <form id="form" action="/search" method="post" target="dummyframe">
+
+        <div>
+            <a href="/" class="button1">Welcome, {{ username }} (logout)</a>
+        </div>
                 <h4>Please enter the coordinates of your property.</h4>
                 <div class="form-group1">
                     <input autocomplete="off" autofocus class="form-control" id="la" name="lat" placeholder="Latitude (N)" type="numeric" value="37.7541839478958"/>
                 </div>
                 <div class="form-group2">
-                    <input autocomplete="off" autofocus class="form-control" id="lng" name="long" placeholder="Longitude (W)" type="numeric" value="-122.406513787399"/>
+                    <input autocomplete="off" autofocus class="form-control" id="lng" name="long" placeholder="Longitude (W)" type="numeric"value="-122.406513787399"/>
                 </div>
                 <button class="btn btn-primary" type="submit">Submit</button>
-            </form>
-
-            <div id="floating-panel2">
-                <h1>Airbnb Helper</h1>
-                <h4>by Carra Wu</h4>
+            <br><br><br><br><br><br><br>
+            <div>
+                <a href="/history" class="button1">Entry History</a>
             </div>
+            </form>
 
             <div id="floating-panel" style="overflow-y: scroll">
                 <h4>San Fransisco Listings by the Numbers</h4>
@@ -71,6 +72,13 @@
             </div>
 
             <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe"></iframe>
+
+            <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+        </nav>
         </div>
 
     </body>

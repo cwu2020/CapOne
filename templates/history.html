@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <title>Cap One</title>
+
+        <link href="/static/styles.css" rel="stylesheet"/>
+        <style>
+        body {
+            background-color: lightblue;
+        }
+        </style>
+        <br>
+        <a href="/index"class=button style="color:darkblue">Go Back To Map</a>
+         <link href="/static/styles.css" rel="stylesheet"/>
+                 <center>
+                  <img src="static/c1logo.png" class="logo">
+</html>
+    <form action="/history" method="post">
+        <div class="form-group">
+            <table style="width:100%">
+            <tr>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            {% for entries in userhistory %}
+            <tr>
+                <td> {{ entries.lat }}</td>
+                <td> {{ entries.longi }} </td>
+            </tr>
+            {% endfor %}
+            </table>
+    </form>
